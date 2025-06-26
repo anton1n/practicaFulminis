@@ -1,6 +1,4 @@
-# Fulminis Practice 
-
-## Introduction
+# Introduction
 
 This project aims to create a modbus tcp controler for ATV630.
 
