@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ATV630 Motor Controller</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>ATV630U22N4 Motor Controller</h1>
+
+    <fieldset>
+        <legend>IP</legend>
+        <form action="start" method="post">
+            <input type="text" name = "id" placeholder="192.168.10.125:502"/>
+        </form>
+    </fieldset>
+
+    <fieldset>
+        <legend>Connection Status</legend>
+        <p>Status: <span>Disconnected</span></p>
+        <form action="/connect" method="post">
+            <button>Connect</button>
+        </form>
+        <form action="/disconnect" method="post">
+            <button>Disconnect</button>
+        </form>
+    </fieldset>
+
+    <fieldset>
+        <legend>Motor Status</legend>
+        <p>Motor State: <strong>STOPPED</strong></p>
+    </fieldset>
+
+    <fieldset>
+        <legend>Motor Data</legend>
+        <table border="1">
+            <tr>
+                <td>Actual Frequency:</td>
+                <td><span>0.0</span> Hz</td>
+            </tr>
+            <tr>
+                <td>Target Frequency:</td>
+                <td><span>25.0</span> Hz</td>
+            </tr>
+            <tr>
+                <td>Motor Current:</td>
+                <td><span>0.0</span> A</td>
+            </tr>
+            <tr>
+                <td>DC Bus Voltage:</td>
+                <td><span>0</span> V</td>
+            </tr>
+            <tr>
+                <td>Motor Power:</td>
+                <td><span>0.0</span> kW</td>
+            </tr>
+        </table>
+        <button>Refresh Data</button>
+    </fieldset>
+
+    <fieldset>
+        <legend>Motor Control</legend>
+        <button>START MOTOR</button>
+        <button>STOP MOTOR</button>
+        <button>EMERGENCY STOP</button>
+        <br><br>
+        <button>Reset Fault</button>
+        <button>Enable Drive</button>
+    </fieldset>
+
+    <fieldset>
+        <legend>Frequency Control</legend>
+        <label>Set Frequency: 
+            <input type="number" value="25" min="0" max="50" step="1"> Hz
+        </label>
+        <button>Set Frequency</button>
+        <br><br>
+    </fieldset>
+
+    <fieldset>
+        <legend>Log</legend>
+        <textarea rows="10" cols="80" readonly>
+        </textarea>
+        <br>
+        <button>Clear Log</button>
+    </fieldset>
+
+</body>
+</html>
