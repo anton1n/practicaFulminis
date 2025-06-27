@@ -4,19 +4,22 @@
     <meta charset="UTF-8">
     <title>ATV630 Motor Controller</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css">
+    <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
 </head>
 <body>
     <h1>ATV630U22N4 Motor Controller</h1>
 
     <fieldset>
         <legend>IP</legend>
-        <form action="start" method="post">
-            <input type="text" name = "id" placeholder="192.168.10.125:502"/>
+        <form action="/start" method="post">
+            <input type="text" id = "ip_addr" name = "ip_addr" value="192.168.100.125"/>
+            <button type="submit">Set Ip</button>
         </form>
     </fieldset>
 
     <fieldset>
-        <legend>Connection Status</legend>
+        <legend>Connection </legend>
         <p>Status: <span>Disconnected</span></p>
         <form action="/connect" method="post">
             <button>Connect</button>
@@ -28,7 +31,7 @@
 
     <fieldset>
         <legend>Motor Status</legend>
-        <p>Motor State: <strong>STOPPED</strong></p>
+        <p>Motor State: <strong id = "motor_state">STOPPED</strong></p>
     </fieldset>
 
     <fieldset>
@@ -47,10 +50,6 @@
                 <td><span>0.0</span> A</td>
             </tr>
             <tr>
-                <td>DC Bus Voltage:</td>
-                <td><span>0</span> V</td>
-            </tr>
-            <tr>
                 <td>Motor Power:</td>
                 <td><span>0.0</span> kW</td>
             </tr>
@@ -60,30 +59,95 @@
 
     <fieldset>
         <legend>Motor Control</legend>
-        <button>START MOTOR</button>
-        <button>STOP MOTOR</button>
-        <button>EMERGENCY STOP</button>
+        <form action="/motor/start" method="post" style="display: inline;">
+            <input type="hidden" name="direction" value="forward">
+            <input type="hidden" name="freq" value="25.0">
+            <button type="submit">START MOTOR</button>
+        </form>
+        <form action="/motor/stop" method="post" style="display: inline;">
+            <button type="submit">STOP MOTOR</button>
+        </form>
+        <form action="/motor/emergency" method="post" style="display: inline;">
+            <button type="submit">EMERGENCY STOP</button>
+        </form>
         <br><br>
-        <button>Reset Fault</button>
-        <button>Enable Drive</button>
     </fieldset>
 
     <fieldset>
         <legend>Frequency Control</legend>
-        <label>Set Frequency: 
-            <input type="number" value="25" min="0" max="50" step="1"> Hz
-        </label>
-        <button>Set Frequency</button>
+        <form action="/set_frequency" method="post" style="display: inline;">
+            <label>Set Frequency: 
+                <input type="number" name="frequency" id="frequency" value="25" min="0" max="50" step="1"> Hz
+            </label>
+            <button type="submit">Set Frequency</button>
+        </form>
         <br><br>
     </fieldset>
 
     <fieldset>
-        <legend>Log</legend>
-        <textarea rows="10" cols="80" readonly>
-        </textarea>
-        <br>
-        <button>Clear Log</button>
+        <legend>Additional Controls</legend>
+        <button py-click="refresh_data">Refresh Data</button>
+        <button py-click="clear_log">Clear Log</button>
     </fieldset>
+
+    <fieldset>
+        <legend>Log</legend>
+        <textarea id="logArea" rows="10" cols="80" readonly></textarea>
+    </fieldset>
+
+    <py-script>
+        import json
+        from pyodide.http import pyfetch
+        from js import document, setInterval
+
+        async def refresh_data():
+            try:
+                response = await pyfetch("/data")
+                data = await response.json()
+
+                log_area = document.getElementById("logArea")
+                log_area.value = data.get("logs", "")
+
+                if "motor_data" in data and data["motor_data"]:
+                    motor_data = data["motor_data"]
+
+                    freq_spans = document.querySelectorAll("td span")
+                    if len(freq_spans) > 0 and "freq" in motor_data:
+                        freq_spans[0].textContent = f"{motor_data['freq']:.1f}"
+                    
+                    if len(freq_spans) > 1 and "target_freq" in motor_data:
+                        freq_spans[1].textContent = f"{motor_data['target_freq']:.1f}"
+
+                    if len(freq_spans) > 2 and "current" in motor_data:
+                        freq_spans[2].textContent = f"{motor_data['current']:.1f}"
+
+                    if "motor_state" in motor_data:
+                        motor_state_element = document.getElementById("motor_state")
+                        if motor_state_element:
+                            motor_state_element.textContent = motor_data['motor_state']
+
+                status_spans = document.querySelectorAll("fieldset p span")
+                if len(status_spans) > 0:
+                    status_spans[0].textContent = data.get("connection_status")
+
+            except Exception as e:
+                print(f"Error refreshing data: {e}")
+
+        def clear_log():
+            log_area = document.getElementById("logArea")
+            log_area.value = ""
+
+        from pyodide.ffi import create_proxy
+        def start_refresh():
+            refresh_proxy = create_proxy(lambda: asyncio.create_task(refresh_data()))
+            setInterval(refresh_proxy, 5000)
+
+            
+        import asyncio
+        asyncio.create_task(refresh_data())
+        start_refresh()
+    </py-script>
+
 
 </body>
 </html>

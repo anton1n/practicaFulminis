@@ -46,6 +46,8 @@ class ATV630Controller:
             print("Disconnected from ATV630")
     
     def read_status(self):
+        if not self.client or not self.client.connected:
+            return None
         try:
             result = self.client.read_holding_registers(self.STATUS_WORD)
             if hasattr(result, 'registers') and result.registers:
@@ -80,6 +82,8 @@ class ATV630Controller:
             return None
     
     def read_frequency(self):
+        if not self.client or not self.client.connected:
+            return None
         try:
             result = self.client.read_holding_registers(self.ACTUAL_FREQ)
             if hasattr(result, 'registers') and result.registers:
@@ -92,12 +96,30 @@ class ATV630Controller:
         except Exception as e:
             print(f"Error reading frequency: {e}")
             return None
+
+    def read_target_frequency(self):
+        if not self.client or not self.client.connected:
+            return None
+        try:
+            result = self.client.read_holding_registers(self.FREQ_REFERENCE)
+            if hasattr(result, 'registers') and result.registers:
+                freq = result.registers[0] / 10.0
+                print(f"Current Frequency: {freq} Hz")
+                return freq
+            else:
+                print("Failed to read frequency")
+                return None
+        except Exception as e:
+            print(f"Error reading frequency: {e}")
+            return None
     
     def read_current(self):
+        if not self.client or not self.client.connected:
+            return None
         try:
             result = self.client.read_holding_registers(self.MOTOR_CURRENT)
             if hasattr(result, 'registers') and result.registers:
-                current = result.registers[0] / 10.0  
+                current = result.registers[0] / 100.0
                 print(f"Motor Current: {current} A")
                 return current
             else:

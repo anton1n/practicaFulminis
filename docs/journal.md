@@ -11,4 +11,8 @@
 <ul>
     <li>Built a base webapp to controll the AV630</li>
     <li>Used MVC design pattern and so on</li>
+</ul>
+### Day 3
+<ul>
+    <li>Continued with the web app</li>
 </ul>   

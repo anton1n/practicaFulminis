@@ -1,5 +1,5 @@
 import sys
-sys.path.insert(0, '../../')
+sys.path.insert(0, '../../../')
 
 from ATV630Controller import ATV630Controller
 
