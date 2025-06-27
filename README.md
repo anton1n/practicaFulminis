@@ -17,8 +17,40 @@ This project aims to create a modbus tcp controler for ATV630.
 
 ## Project layout
     
-    ATV630Controller.py # Main program fo now..
-    mkdocs.yml    # The documentation configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+        ├── ATV630Controller.py # Console app 
+        ├── docs 
+        │   ├── ATV600_Communication_parameters_EAV64332_V3.7.xlsx
+        │   ├── index.md # The documentation homepage.
+        │   ├── journal.md # Progress tracker
+        │   ├── modbustcp.md
+        │   ├── parameters.md
+        │   └── registers.md
+        ├── mkdocs.yml # The documentation configuration file.
+        ├── README.md
+        ├── requirements.txt
+        └── webapp
+            ├── controller
+            │   └── atv_controller.py
+            ├── handler
+            │   └── handlers.py
+            ├── main.py
+            ├── model
+            │   └── atv_model.py
+            ├── routes
+            │   └── main.py
+            ├── server.py
+            └── templates
+                ├── index.html
+                └── style.css
+
+## Must Have
+    - [x] Working modbus communication
+    - [x] Basic webapp with:
+            - [x] Connect/Disconect
+            - [x] Start/Stop Motor
+            - [x] Set Frequency
+            - [x] Read Frequency, Current
+            
+## Nice to have
+    - [] Read Motor Power
+
